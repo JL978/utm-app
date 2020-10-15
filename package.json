@@ -28,6 +28,7 @@
     "@shopify/koa-shopify-graphql-proxy": "^4.0.2",
     "@shopify/koa-shopify-webhooks": "^2.3.1",
     "@shopify/polaris": "^5.3.1",
+    "@shopify/polaris-icons": "^4.0.0",
     "@zeit/next-css": "^1.0.1",
     "apollo-boost": "^0.4.4",
     "cross-env": "^7.0.2",

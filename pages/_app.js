@@ -12,13 +12,28 @@ const client = new ApolloClient({
     credentials: "include",
   },
 });
+
+const theme = {
+  colors: {
+    topBar: {
+      background: "#225062",
+    },
+  },
+  logo: {
+    width: 124,
+    topBarSource:
+      "https://cdn.shopify.com/s/files/1/0446/6937/files/jaded-pixel-logo-color.svg?6215648040070010999",
+    url: "http://jadedpixel.com",
+    accessibilityLabel: "Jaded Pixel",
+  },
+};
 class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props;
     const shopOrigin = Cookies.get("shopOrigin");
     return (
       <Container>
-        <AppProvider i18n={translations}>
+        <AppProvider i18n={translations} theme={theme}>
           <Provider
             config={{
               apiKey: API_KEY,
