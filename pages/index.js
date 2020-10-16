@@ -2,11 +2,9 @@ import { useState, useRef, useCallback } from "react";
 import {
   Page,
   Frame,
-  TopBar,
   Toast,
   ContextualSaveBar,
   Card,
-  ActionList,
   Navigation,
   Loading,
   Layout,
@@ -28,6 +26,7 @@ import {
   AnalyticsMajor,
   ConversationMinor,
 } from "@shopify/polaris-icons";
+import TopBarMarkup from "../components/TopBar";
 
 function Index() {
   const defaultState = useRef({
@@ -39,9 +38,7 @@ function Index() {
   const [toastActive, setToastActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const [searchActive, setSearchActive] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  const [userMenuActive, setUserMenuActive] = useState(false);
+
   const [mobileNavigationActive, setMobileNavigationActive] = useState(false);
   const [modalActive, setModalActive] = useState(false);
   const [nameFieldValue, setNameFieldValue] = useState(
@@ -50,9 +47,7 @@ function Index() {
   const [emailFieldValue, setEmailFieldValue] = useState(
     defaultState.current.emailFieldValue
   );
-  const [storeName, setStoreName] = useState(
-    defaultState.current.nameFieldValue
-  );
+
   const [supportSubject, setSupportSubject] = useState("");
   const [supportMessage, setSupportMessage] = useState("");
 
@@ -77,6 +72,7 @@ function Index() {
     setToastActive(true);
     setStoreName(defaultState.current.nameFieldValue);
   }, [emailFieldValue, nameFieldValue]);
+
   const handleNameFieldChange = useCallback((value) => {
     setNameFieldValue(value);
     value && setIsDirty(true);
@@ -85,22 +81,12 @@ function Index() {
     setEmailFieldValue(value);
     value && setIsDirty(true);
   }, []);
-  const handleSearchResultsDismiss = useCallback(() => {
-    setSearchActive(false);
-    setSearchValue("");
-  }, []);
-  const handleSearchFieldChange = useCallback((value) => {
-    setSearchValue(value);
-    setSearchActive(value.length > 0);
-  }, []);
+
   const toggleToastActive = useCallback(
     () => setToastActive((toastActive) => !toastActive),
     []
   );
-  const toggleUserMenuActive = useCallback(
-    () => setUserMenuActive((userMenuActive) => !userMenuActive),
-    []
-  );
+
   const toggleMobileNavigationActive = useCallback(
     () =>
       setMobileNavigationActive(
@@ -117,15 +103,16 @@ function Index() {
     []
   );
 
+  const topBarMarkup = (
+    <TopBarMarkup
+      defaultState={defaultState}
+      toggleMobileNavigationActive={toggleMobileNavigationActive}
+    />
+  );
+
   const toastMarkup = toastActive ? (
     <Toast onDismiss={toggleToastActive} content="Changes saved" />
   ) : null;
-
-  const userMenuActions = [
-    {
-      items: [{ content: "Community forums" }],
-    },
-  ];
 
   const contextualSaveBarMarkup = isDirty ? (
     <ContextualSaveBar
@@ -138,48 +125,6 @@ function Index() {
       }}
     />
   ) : null;
-
-  const userMenuMarkup = (
-    <TopBar.UserMenu
-      actions={userMenuActions}
-      name="Dharma"
-      detail={storeName}
-      initials="D"
-      open={userMenuActive}
-      onToggle={toggleUserMenuActive}
-    />
-  );
-
-  const searchResultsMarkup = (
-    <Card>
-      <ActionList
-        items={[
-          { content: "Shopify help center" },
-          { content: "Community forums" },
-        ]}
-      />
-    </Card>
-  );
-
-  const searchFieldMarkup = (
-    <TopBar.SearchField
-      onChange={handleSearchFieldChange}
-      value={searchValue}
-      placeholder="Search"
-    />
-  );
-
-  const topBarMarkup = (
-    <TopBar
-      showNavigationToggle
-      userMenu={userMenuMarkup}
-      searchResultsVisible={searchActive}
-      searchField={searchFieldMarkup}
-      searchResults={searchResultsMarkup}
-      onSearchResultsDismiss={handleSearchResultsDismiss}
-      onNavigationToggle={toggleMobileNavigationActive}
-    />
-  );
 
   const navigationMarkup = (
     <Navigation location="/">
