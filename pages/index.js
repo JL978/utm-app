@@ -5,6 +5,8 @@ import TopBarMarkup from "../components/TopBar";
 import NavigationMarkup from "../components/Navigation";
 import DashMarkup from "../components/Dashboard";
 import ModalMarkup from "../components/Modal";
+import AddLink from "../components/AddLink";
+import { Switch, Route, StaticRouter as Router } from "react-router-dom";
 
 function Index() {
   const defaultState = useRef({
@@ -51,8 +53,6 @@ function Index() {
     <NavigationMarkup toggleModalActive={toggleModalActive} />
   );
 
-  const dashMarkup = <DashMarkup />;
-
   const modalMarkup = (
     <ModalMarkup
       toggleModalActive={toggleModalActive}
@@ -68,7 +68,15 @@ function Index() {
       onNavigationDismiss={toggleMobileNavigationActive}
       skipToContentTarget={skipToContentRef.current}
     >
-      {dashMarkup}
+      <Switch>
+        <Route exact path="/">
+          <DashMarkup />
+        </Route>
+        <Route path="/add">
+          <AddLink />
+        </Route>
+      </Switch>
+
       {toastMarkup}
       {modalMarkup}
     </Frame>
