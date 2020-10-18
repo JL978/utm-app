@@ -7,8 +7,11 @@ import {
   AnalyticsMajor,
   ConversationMinor,
 } from "@shopify/polaris-icons";
+import { useRouter } from "next/router";
 
 export default function NavigationMarkup({ toggleModalActive }) {
+  const router = useRouter();
+
   return (
     <Navigation location="/">
       <Navigation.Section
@@ -26,17 +29,17 @@ export default function NavigationMarkup({ toggleModalActive }) {
           {
             label: "Dashboard",
             icon: HomeMajor,
-            onClick: () => {},
+            onClick: () => router.push("/"),
           },
           {
             label: "Create",
             icon: AddMajor,
-            onClick: () => {},
+            onClick: () => router.push("/add"),
           },
           {
             label: "Analytics",
             icon: AnalyticsMajor,
-            onClick: () => {},
+            onClick: () => router.push("/"),
           },
         ]}
         action={{

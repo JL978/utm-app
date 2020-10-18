@@ -6,8 +6,7 @@ import { Provider } from "@shopify/app-bridge-react";
 import Cookies from "js-cookie";
 import "@shopify/polaris/dist/styles.css";
 import translations from "@shopify/polaris/locales/en.json";
-import MyRouter from "../router/router";
-import { StaticRouter as Router } from "react-router-dom";
+import Layout from "../components/Layout";
 
 const client = new ApolloClient({
   fetchOptions: {
@@ -35,22 +34,21 @@ class MyApp extends App {
     const shopOrigin = Cookies.get("shopOrigin");
     return (
       <Container>
-        <Router>
-          <AppProvider i18n={translations} theme={theme}>
-            <Provider
-              config={{
-                apiKey: API_KEY,
-                shopOrigin: shopOrigin,
-                forceRedirect: true,
-              }}
-            >
-              <ApolloProvider client={client}>
+        <AppProvider i18n={translations} theme={theme}>
+          <Provider
+            config={{
+              apiKey: API_KEY,
+              shopOrigin: shopOrigin,
+              forceRedirect: true,
+            }}
+          >
+            <ApolloProvider client={client}>
+              <Layout>
                 <Component {...pageProps} />
-                <MyRouter />
-              </ApolloProvider>
-            </Provider>
-          </AppProvider>
-        </Router>
+              </Layout>
+            </ApolloProvider>
+          </Provider>
+        </AppProvider>
       </Container>
     );
   }
