@@ -18,6 +18,7 @@
     "url": "https://github.com/shopify/shopify-node-app/issues"
   },
   "dependencies": {
+    "@apollo/client": "^3.2.5",
     "@babel/core": "7.11.4",
     "@babel/polyfill": "^7.6.0",
     "@babel/preset-env": "^7.6.2",

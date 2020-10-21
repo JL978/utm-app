@@ -1,5 +1,4 @@
-import ApolloClient from "apollo-boost";
-import { ApolloProvider } from "react-apollo";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import App, { Container } from "next/app";
 import { AppProvider } from "@shopify/polaris";
 import { Provider } from "@shopify/app-bridge-react";
@@ -9,9 +8,11 @@ import translations from "@shopify/polaris/locales/en.json";
 import Layout from "../components/Layout";
 
 const client = new ApolloClient({
+  uri: "/graphql",
   fetchOptions: {
     credentials: "include",
   },
+  cache: new InMemoryCache(),
 });
 
 const theme = {
@@ -28,6 +29,7 @@ const theme = {
     accessibilityLabel: "Jaded Pixel",
   },
 };
+
 class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props;
