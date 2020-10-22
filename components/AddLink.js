@@ -7,8 +7,11 @@ import {
   TextField,
   Page,
   Button,
-  Select,
   Toast,
+  Thumbnail,
+  ResourceList,
+  ResourceItem,
+  TextStyle,
 } from "@shopify/polaris";
 import { ResourcePicker } from "@shopify/app-bridge-react";
 import { useRouter } from "next/router";
@@ -43,6 +46,7 @@ export default function AddLink() {
 
   const [link, setLink] = useState("");
   const [params, setParams] = useState("");
+  const [productInfo, setProductInfo] = useState(null);
 
   const [id, setId] = useState("");
   const [getLink, { loading, error, data }] = useLazyQuery(GET_LINK, {
@@ -192,6 +196,31 @@ export default function AddLink() {
                 </Button>
               </FormLayout>
             </Card>
+            <Card>
+              {productInfo ? (
+                <ResourceItem
+                  media={
+                    <Thumbnail
+                      source={productInfo.images[0].originalSrc}
+                      alt={productInfo.handle}
+                    />
+                  }
+                >
+                  <h1>
+                    <TextStyle variation="strong">
+                      {productInfo.title}
+                    </TextStyle>
+                  </h1>
+                  <p>{productInfo.descriptionHtml}</p>
+                </ResourceItem>
+              ) : (
+                <h1 style={{ textAlign: "center" }}>
+                  <TextStyle variation="strong">
+                    No Product To Preview
+                  </TextStyle>
+                </h1>
+              )}
+            </Card>
           </Layout.AnnotatedSection>
         </Layout>
         {toastMarkup}
@@ -203,8 +232,10 @@ export default function AddLink() {
         onCancel={() => setOpen(false)}
         onSelection={(choice) => {
           const product = choice.selection[0];
-          console.log(product.id);
-          setId(product.id);
+          const { id, title, handle, images, descriptionHtml } = product;
+          console.log(product);
+          setId(id);
+          setProductInfo({ title, handle, images, descriptionHtml });
           setOpen(false);
         }}
       />

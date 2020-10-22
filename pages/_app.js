@@ -38,24 +38,22 @@ class MyApp extends App {
     const shopOrigin = Cookies.get("shopOrigin");
     return (
       <Container>
-        <Router>
-          <AppProvider i18n={translations} theme={theme}>
-            <Provider
-              config={{
-                apiKey: API_KEY,
-                shopOrigin: shopOrigin,
-                forceRedirect: true,
-              }}
-            >
-              <ApolloProvider client={client}>
-                <Layout>
-                  <Component {...pageProps} />
-                  <RoutePropagator />
-                </Layout>
-              </ApolloProvider>
-            </Provider>
-          </AppProvider>
-        </Router>
+        <AppProvider i18n={translations} theme={theme}>
+          <Provider
+            config={{
+              apiKey: API_KEY,
+              shopOrigin: shopOrigin,
+              forceRedirect: true,
+            }}
+          >
+            <ApolloProvider client={client}>
+              <Layout>
+                <Component {...pageProps} />
+                <RoutePropagator />
+              </Layout>
+            </ApolloProvider>
+          </Provider>
+        </AppProvider>
       </Container>
     );
   }
