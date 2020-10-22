@@ -6,6 +6,8 @@ import Cookies from "js-cookie";
 import "@shopify/polaris/dist/styles.css";
 import translations from "@shopify/polaris/locales/en.json";
 import Layout from "../components/Layout";
+import RoutePropagator from "../router";
+import { StaticRouter as Router } from "react-router-dom";
 
 const client = new ApolloClient({
   uri: "/graphql",
@@ -36,21 +38,24 @@ class MyApp extends App {
     const shopOrigin = Cookies.get("shopOrigin");
     return (
       <Container>
-        <AppProvider i18n={translations} theme={theme}>
-          <Provider
-            config={{
-              apiKey: API_KEY,
-              shopOrigin: shopOrigin,
-              forceRedirect: true,
-            }}
-          >
-            <ApolloProvider client={client}>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </ApolloProvider>
-          </Provider>
-        </AppProvider>
+        <Router>
+          <AppProvider i18n={translations} theme={theme}>
+            <Provider
+              config={{
+                apiKey: API_KEY,
+                shopOrigin: shopOrigin,
+                forceRedirect: true,
+              }}
+            >
+              <ApolloProvider client={client}>
+                <Layout>
+                  <Component {...pageProps} />
+                  <RoutePropagator />
+                </Layout>
+              </ApolloProvider>
+            </Provider>
+          </AppProvider>
+        </Router>
       </Container>
     );
   }

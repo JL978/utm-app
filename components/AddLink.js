@@ -67,13 +67,22 @@ export default function AddLink() {
   useEffect(() => {
     const inputData = [source, medium, campaign, content, term];
     let params = "?";
-    for (const [index, data] of inputData.entries()) {
+    const outputData = [];
+    for (const data of inputData) {
       if (data.input != "") {
         const query = slugMap.get(data.term) + "=" + data.input;
-        params += query;
-        setParams(params);
+        outputData.push(query);
       }
     }
+    for (const [index, param] of outputData.entries()) {
+      const length = outputData.length;
+      if (index + 1 !== length) {
+        params += param + "&";
+      } else {
+        params += param;
+      }
+    }
+    setParams(params);
   }, [source, medium, campaign, content, term]);
 
   const copyToClipboard = () => {
