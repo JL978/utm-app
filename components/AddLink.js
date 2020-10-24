@@ -90,9 +90,7 @@ export default function AddLink() {
   }, [source, medium, campaign, content, term]);
 
   const copyToClipboard = () => {
-    const inputField = document.getElementById("PolarisTextField6");
-
-    console.log(inputField);
+    const inputField = document.getElementById("copy_link");
 
     inputField.select();
     inputField.setSelectionRange(0, 99999); /*For mobile devices*/
@@ -184,6 +182,7 @@ export default function AddLink() {
                   label="Source"
                   value={link !== "" && link + params}
                   multiline={true}
+                  id="copy_link"
                 />
                 <Button
                   disabled={link === ""}
@@ -198,26 +197,30 @@ export default function AddLink() {
             </Card>
             <Card>
               {productInfo ? (
-                <ResourceItem
-                  media={
-                    <Thumbnail
-                      source={productInfo.images[0].originalSrc}
-                      alt={productInfo.handle}
-                    />
-                  }
+                <a
+                  href={link}
+                  target="_blank"
+                  style={{ textDecoration: "none", color: "inherit" }}
                 >
-                  <h1>
-                    <TextStyle variation="strong">
-                      {productInfo.title}
-                    </TextStyle>
-                  </h1>
-                  <p>{productInfo.descriptionHtml}</p>
-                </ResourceItem>
+                  <ResourceItem
+                    media={
+                      <Thumbnail
+                        source={productInfo.images[0].originalSrc}
+                        alt={productInfo.handle}
+                      />
+                    }
+                  >
+                    <h1>
+                      <TextStyle variation="strong">
+                        {productInfo.title}
+                      </TextStyle>
+                    </h1>
+                    <p>{productInfo.descriptionHtml}</p>
+                  </ResourceItem>
+                </a>
               ) : (
-                <h1 style={{ textAlign: "center" }}>
-                  <TextStyle variation="strong">
-                    No Product To Preview
-                  </TextStyle>
+                <h1 style={{ textAlign: "center", padding: "10px 0" }}>
+                  <TextStyle>No Product To Preview</TextStyle>
                 </h1>
               )}
             </Card>
