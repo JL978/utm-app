@@ -9,7 +9,6 @@ import {
   Button,
   Toast,
   Thumbnail,
-  ResourceList,
   ResourceItem,
   TextStyle,
 } from "@shopify/polaris";
@@ -25,24 +24,19 @@ const GET_LINK = gql`
   }
 `;
 
-const slugMap = new Map();
-slugMap
-  .set("source", "utm_source")
-  .set("medium", "utm_medium")
-  .set("campaign", "utm_campaign")
-  .set("term", "utm_term")
-  .set("content", "utm_content");
-
 export default function AddLink() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
 
-  const [source, setSource] = useState({ input: "", term: "source" });
-  const [medium, setMedium] = useState({ input: "", term: "medium" });
-  const [campaign, setCampaign] = useState({ input: "", term: "campaign" });
-  const [content, setContent] = useState({ input: "", term: "content" });
-  const [term, setTerm] = useState({ input: "", term: "term" });
+  const [source, setSource] = useState({ input: "", param: "utm_source" });
+  const [medium, setMedium] = useState({ input: "", param: "utm_medium" });
+  const [campaign, setCampaign] = useState({
+    input: "",
+    param: "utm_campaign",
+  });
+  const [content, setContent] = useState({ input: "", param: "utm_content" });
+  const [term, setTerm] = useState({ input: "", param: "utm_term" });
 
   const [link, setLink] = useState("");
   const [params, setParams] = useState("");
@@ -55,12 +49,14 @@ export default function AddLink() {
     },
   });
 
+  //When ID is updated, make a new query
   useEffect(() => {
     if (id !== "") {
       getLink();
     }
   }, [id]);
 
+  //When data changes due to query, set url
   useEffect(() => {
     if (data !== undefined && !error) {
       const url = data.product.onlineStorePreviewUrl;
@@ -68,13 +64,14 @@ export default function AddLink() {
     }
   }, [data]);
 
+  //When user typing into one of the text field, update the query params
   useEffect(() => {
     const inputData = [source, medium, campaign, content, term];
     let params = "?";
     const outputData = [];
     for (const data of inputData) {
       if (data.input != "") {
-        const query = slugMap.get(data.term) + "=" + data.input;
+        const query = data.param + "=" + data.input;
         outputData.push(query);
       }
     }
@@ -220,7 +217,9 @@ export default function AddLink() {
                 </a>
               ) : (
                 <h1 style={{ textAlign: "center", padding: "10px 0" }}>
-                  <TextStyle>No Product To Preview</TextStyle>
+                  <TextStyle variation="subdued">
+                    No Product To Preview
+                  </TextStyle>
                 </h1>
               )}
             </Card>
@@ -236,7 +235,6 @@ export default function AddLink() {
         onSelection={(choice) => {
           const product = choice.selection[0];
           const { id, title, handle, images, descriptionHtml } = product;
-          console.log(product);
           setId(id);
           setProductInfo({ title, handle, images, descriptionHtml });
           setOpen(false);
