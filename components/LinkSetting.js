@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import {
   ContextualSaveBar,
   Layout,
@@ -16,7 +16,7 @@ import {
 import { useRouter } from "next/router";
 import { useLazyQuery, gql } from "@apollo/client";
 
-const GET_LINK = gql`
+const GET_PRODUCT_LINK = gql`
   query getLink($id: ID!) {
     product(id: $id) {
       onlineStorePreviewUrl
@@ -24,7 +24,19 @@ const GET_LINK = gql`
   }
 `;
 
-export default function LinkSetting({ productInfo, id }) {
+const GET_COLLECTION_HANDLE = gql`
+  query getLink($id: ID!) {
+    collection(id: $id) {
+      handle
+    }
+
+    shop {
+      myshopifyDomain
+    }
+  }
+`;
+
+export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
   const router = useRouter();
   const [toastOpen, setToastOpen] = useState(false);
   const [link, setLink] = useState("");
@@ -37,11 +49,12 @@ export default function LinkSetting({ productInfo, id }) {
     { name: "content", input: "", label: "Content", param: "utm_content" },
   ]);
 
-  useEffect(() => {
-    console.log(params);
-  }, [params]);
+  const [outputParams, setOutputParams] = useState("");
 
-  const [getLink, { loading, error, data }] = useLazyQuery(GET_LINK, {
+  const isProduct = useMemo(() => type === "Product", [type]);
+  const query = type === isProduct ? GET_PRODUCT_LINK : GET_COLLECTION_HANDLE;
+
+  const [getLink, { loading, error, data }] = useLazyQuery(query, {
     variables: {
       id: id,
     },
@@ -57,7 +70,16 @@ export default function LinkSetting({ productInfo, id }) {
   //When data changes due to query, set url
   useEffect(() => {
     if (data !== undefined && !error) {
-      const url = data.product.onlineStorePreviewUrl;
+      let url;
+      if (isProduct) {
+        url = data.product.onlineStorePreviewUrl;
+      } else {
+        url =
+          "https://" +
+          data.shop.myshopifyDomain +
+          "/collections/" +
+          data.collection.handle;
+      }
       setLink(url);
     }
   }, [data]);
@@ -80,7 +102,7 @@ export default function LinkSetting({ productInfo, id }) {
         outputParams += param;
       }
     }
-    setParams(outputParams);
+    setOutputParams(outputParams);
   }, [params]);
 
   const copyToClipboard = () => {
@@ -107,9 +129,6 @@ export default function LinkSetting({ productInfo, id }) {
           return { ...param, input: value };
         }
       });
-      console.log(newData);
-      console.log(typeof newData);
-
       return newData;
     });
   };
@@ -119,7 +138,7 @@ export default function LinkSetting({ productInfo, id }) {
       breadcrumbs={[{ content: "Home", url: "/" }]}
       title="Create a link"
       primaryAction={
-        <Button loading={loading} primary onClick={() => setOpen(true)}>
+        <Button loading={loading} primary onClick={() => setPickerOpen(true)}>
           {link === "" ? "Pick a product to start" : "Choose another product"}
         </Button>
       }
@@ -143,16 +162,14 @@ export default function LinkSetting({ productInfo, id }) {
         >
           <Card sectioned>
             <FormLayout>
-              {params.map((param, index) => {
-                return (
-                  <TextField
-                    key={index}
-                    value={param.input}
-                    label={param.label}
-                    //onChange={(value) => updateParams(index, value)}
-                  />
-                );
-              })}
+              {params.map((param, index) => (
+                <TextField
+                  key={index}
+                  value={param.input}
+                  label={param.label}
+                  onChange={(value) => updateParams(index, value)}
+                />
+              ))}
             </FormLayout>
           </Card>
         </Layout.AnnotatedSection>
@@ -164,7 +181,7 @@ export default function LinkSetting({ productInfo, id }) {
             <FormLayout>
               <TextField
                 label="Source"
-                value={link !== "" && link + params}
+                value={link !== "" && link + outputParams}
                 multiline={true}
                 id="copy_link"
               />
@@ -189,7 +206,11 @@ export default function LinkSetting({ productInfo, id }) {
                 <ResourceItem
                   media={
                     <Thumbnail
-                      source={productInfo.images[0].originalSrc}
+                      source={
+                        type === "Product"
+                          ? productInfo.images[0].originalSrc
+                          : productInfo.image.originalSrc
+                      }
                       alt={productInfo.handle}
                     />
                   }

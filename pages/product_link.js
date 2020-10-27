@@ -9,12 +9,17 @@ export default function product_link() {
 
   return (
     <>
-      <LinkSetting id={id} productInfo={productInfo} />
+      <LinkSetting
+        id={id}
+        productInfo={productInfo}
+        setPickerOpen={setPickerOpen}
+        type="Product"
+      />
       <ResourcePicker
         open={pickerOpen}
         resourceType="Product"
         showVariants={false}
-        onCancel={() => setOpen(false)}
+        onCancel={() => setPickerOpen(false)}
         onSelection={(choice) => {
           const product = choice.selection[0];
           const { id, title, handle, images, descriptionHtml } = product;
