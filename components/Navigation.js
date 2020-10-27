@@ -6,6 +6,8 @@ import {
   AddMajor,
   AnalyticsMajor,
   ConversationMinor,
+  AddProductMajor,
+  CollectionsMajor,
 } from "@shopify/polaris-icons";
 import { useRouter } from "next/router";
 
@@ -47,6 +49,20 @@ export default function NavigationMarkup({ toggleModalActive }) {
           accessibilityLabel: "Contact support",
           onClick: toggleModalActive,
         }}
+      />
+      <Navigation.Section
+        separator
+        title="Create links"
+        items={[
+          {
+            label: "Product",
+            icon: AddProductMajor,
+          },
+          {
+            label: "Collection",
+            icon: CollectionsMajor,
+          },
+        ]}
       />
     </Navigation>
   );

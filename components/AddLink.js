@@ -27,6 +27,7 @@ const GET_LINK = gql`
 export default function AddLink() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [otherOpen, setOtherOpen] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
 
   const [source, setSource] = useState({ input: "", param: "utm_source" });
@@ -166,6 +167,9 @@ export default function AddLink() {
                     setTerm((data) => ({ ...data, input: value }))
                   }
                 />
+                <Button primary onClick={() => setOtherOpen(true)}>
+                  Test
+                </Button>
               </FormLayout>
             </Card>
           </Layout.AnnotatedSection>
@@ -238,6 +242,20 @@ export default function AddLink() {
           setId(id);
           setProductInfo({ title, handle, images, descriptionHtml });
           setOpen(false);
+        }}
+      />
+      <ResourcePicker
+        open={otherOpen}
+        resourceType="Collection"
+        showVariants={false}
+        onCancel={() => setOtherOpen(false)}
+        onSelection={(choice) => {
+          console.log(choice);
+          // const product = choice.selection[0];
+          // const { id, title, handle, images, descriptionHtml } = product;
+          // setId(id);
+          // setProductInfo({ title, handle, images, descriptionHtml });
+          // setOpen(false);
         }}
       />
     </>
