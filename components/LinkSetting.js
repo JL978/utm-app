@@ -52,7 +52,7 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
   const [outputParams, setOutputParams] = useState("");
 
   const isProduct = useMemo(() => type === "Product", [type]);
-  const query = type === isProduct ? GET_PRODUCT_LINK : GET_COLLECTION_HANDLE;
+  const query = isProduct ? GET_PRODUCT_LINK : GET_COLLECTION_HANDLE;
 
   const [getLink, { loading, error, data }] = useLazyQuery(query, {
     variables: {
@@ -72,6 +72,7 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
     if (data !== undefined && !error) {
       let url;
       if (isProduct) {
+        console.log(data);
         url = data.product.onlineStorePreviewUrl;
       } else {
         url =
@@ -139,7 +140,9 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
       title="Create a link"
       primaryAction={
         <Button loading={loading} primary onClick={() => setPickerOpen(true)}>
-          {link === "" ? "Pick a product to start" : "Choose another product"}
+          {link === ""
+            ? `Pick a ${isProduct ? "product" : "collection"} to start`
+            : `Choose another ${isProduct ? "product" : "collection"}`}
         </Button>
       }
     >

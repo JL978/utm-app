@@ -17,26 +17,12 @@ export default function NavigationMarkup({ toggleModalActive }) {
   return (
     <Navigation location="/">
       <Navigation.Section
-        items={[
-          {
-            label: "Back to Shopify",
-            icon: ArrowLeftMinor,
-          },
-        ]}
-      />
-      <Navigation.Section
-        separator
         title="Jaded Pixel App"
         items={[
           {
             label: "Dashboard",
             icon: HomeMajor,
             onClick: () => router.push("/"),
-          },
-          {
-            label: "Create",
-            icon: AddMajor,
-            onClick: () => router.push("/add"),
           },
           {
             label: "Analytics",
@@ -57,10 +43,12 @@ export default function NavigationMarkup({ toggleModalActive }) {
           {
             label: "Product",
             icon: AddProductMajor,
+            onClick: () => router.push("/product_link"),
           },
           {
             label: "Collection",
             icon: CollectionsMajor,
+            onClick: () => router.push("/collection_link"),
           },
         ]}
       />
