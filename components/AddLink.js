@@ -116,7 +116,7 @@ export default function AddLink() {
         <ContextualSaveBar
           message="Unsaved changes"
           saveAction={{
-            onAction: () => console.log("add form submit logic"),
+            onAction: () => {},
             loading: false,
             disabled: false,
           }}

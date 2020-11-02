@@ -15,6 +15,7 @@ import {
 
 import { useRouter } from "next/router";
 import { useLazyQuery, gql } from "@apollo/client";
+import axios from "axios";
 
 const GET_PRODUCT_LINK = gql`
   query getLink($id: ID!) {
@@ -42,11 +43,48 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
   const [link, setLink] = useState("");
 
   const [params, setParams] = useState([
-    { name: "source", input: "", label: "Source", param: "utm_source" },
-    { name: "medium", input: "", label: "Medium", param: "utm_medium" },
-    { name: "campaign", input: "", label: "Campaign", param: "utm_campaign" },
-    { name: "term", input: "", label: "Key Word", param: "utm_term" },
-    { name: "content", input: "", label: "Content", param: "utm_content" },
+    {
+      name: "source",
+      input: "",
+      label: "Source*",
+      param: "utm_source",
+      error: "",
+      helpText: "The referrer: (e.g. google, influencer's name)",
+    },
+    {
+      name: "medium",
+      input: "",
+      label: "Medium*",
+      param: "utm_medium",
+      error: "",
+      helpText: "Marketing medium: (e.g. cpc, banner, email)",
+    },
+    {
+      name: "campaign",
+      input: "",
+      label: "Campaign*",
+      param: "utm_campaign",
+      error: "",
+      helpText: "Product, promo code, or slogan (e.g. spring_sale)",
+    },
+    {
+      name: "term",
+      input: "",
+      label: "Key Word",
+      param: "utm_term",
+      error: "",
+      helpText:
+        "A paid search term associated with this link (e.g. black dress, wave bracelet)",
+    },
+    {
+      name: "content",
+      input: "",
+      label: "Content",
+      param: "utm_content",
+      error: "",
+      helpText:
+        "Description of the ad or location of the link (e.g. top banner, black dress version A)",
+    },
   ]);
 
   const [outputParams, setOutputParams] = useState("");
@@ -149,7 +187,18 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
       <ContextualSaveBar
         message="Unsaved changes"
         saveAction={{
-          onAction: () => console.log("add form submit logic"),
+          onAction: () => {
+            axios({
+              method: "POST",
+              url: "/links",
+              data: {
+                message: "hello",
+              },
+              withCredentials: true,
+            })
+              .then((res) => console.log(res))
+              .catch((error) => console.log(error));
+          },
           loading: false,
           disabled: false,
         }}
@@ -171,6 +220,8 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
                   value={param.input}
                   label={param.label}
                   onChange={(value) => updateParams(index, value)}
+                  error={param.error}
+                  helpText={param.helpText}
                 />
               ))}
             </FormLayout>
@@ -183,7 +234,7 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
           <Card sectioned>
             <FormLayout>
               <TextField
-                label="Source"
+                label="Link"
                 value={link !== "" && link + outputParams}
                 multiline={true}
                 id="copy_link"

@@ -58,8 +58,15 @@ app.prepare().then(() => {
     ctx.respond = false;
     ctx.res.statusCode = 200;
   });
+
+  router.post("/links", async (ctx) => {
+    ctx.body = ctx.request.body;
+    ctx.res.statusCode = 200;
+  });
+
   server.use(router.allowedMethods());
   server.use(router.routes());
+
   server.listen(port, () => {
     console.log(`> Ready on http://localhost:${port}`);
   });
