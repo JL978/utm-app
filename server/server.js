@@ -8,6 +8,8 @@ import next from "next";
 import Router from "koa-router";
 import session from "koa-session";
 import * as handlers from "./handlers/index";
+const koaBody = require("koa-body");
+
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
 const dev = process.env.NODE_ENV !== "production";
@@ -59,8 +61,9 @@ app.prepare().then(() => {
     ctx.res.statusCode = 200;
   });
 
-  router.post("/links", async (ctx) => {
-    ctx.body = ctx.request.body;
+  router.post("/links", koaBody(), async (ctx) => {
+    const body = ctx.request.body;
+    console.log(body);
     ctx.res.statusCode = 200;
   });
 
