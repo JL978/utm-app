@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useContext,
+} from "react";
 import {
   ContextualSaveBar,
   Layout,
@@ -15,6 +21,7 @@ import {
 
 import { useRouter } from "next/router";
 import { useLazyQuery, gql } from "@apollo/client";
+import { OriginContext } from "../Context";
 import axios from "axios";
 
 const GET_PRODUCT_LINK = gql`
@@ -30,10 +37,6 @@ const GET_COLLECTION_HANDLE = gql`
     collection(id: $id) {
       handle
     }
-
-    shop {
-      myshopifyDomain
-    }
   }
 `;
 
@@ -41,6 +44,8 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
   const router = useRouter();
   const [toastOpen, setToastOpen] = useState(false);
   const [link, setLink] = useState("");
+  const [linkError, setLinkError] = useState("");
+  const shopOrigin = useContext(OriginContext);
 
   const [params, setParams] = useState([
     {
@@ -54,7 +59,7 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
     {
       name: "medium",
       input: "",
-      label: "Medium*",
+      label: "Medium",
       param: "utm_medium",
       error: "",
       helpText: "Marketing medium: (e.g. cpc, banner, email)",
@@ -62,7 +67,7 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
     {
       name: "campaign",
       input: "",
-      label: "Campaign*",
+      label: "Campaign",
       param: "utm_campaign",
       error: "",
       helpText: "Product, promo code, or slogan (e.g. spring_sale)",
@@ -114,10 +119,7 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
         url = data.product.onlineStorePreviewUrl;
       } else {
         url =
-          "https://" +
-          data.shop.myshopifyDomain +
-          "/collections/" +
-          data.collection.handle;
+          "https://" + shopOrigin + "/collections/" + data.collection.handle;
       }
       setLink(url);
     }
@@ -172,6 +174,44 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
     });
   };
 
+  const onSave = () => {
+    if (params[0].input === "" || link === "") {
+      if (params[0].input === "") {
+        setParams((params) =>
+          params.map((param, index) =>
+            index === 0 ? { ...param, error: "Source is required" } : param
+          )
+        );
+      } else {
+        setParams((params) =>
+          params.map((param, index) =>
+            index === 0 ? { ...param, error: "" } : param
+          )
+        );
+      }
+      if (link === "") {
+        setLinkError("Please choose a product to add a link");
+      } else {
+        setLinkError("");
+      }
+    } else {
+      const paramsArr = params.map(({ param, input }) => ({ param, input }));
+      axios({
+        method: "POST",
+        url: "/links",
+        data: {
+          resource_link: link + outputParams,
+          paramsArr,
+          resource_type: type,
+          store_id: shopOrigin,
+        },
+        withCredentials: true,
+      })
+        .then((res) => console.log(res))
+        .catch((error) => console.log(error));
+    }
+  };
+
   return (
     <Page
       breadcrumbs={[{ content: "Home", url: "/" }]}
@@ -187,18 +227,7 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
       <ContextualSaveBar
         message="Unsaved changes"
         saveAction={{
-          onAction: () => {
-            axios({
-              method: "POST",
-              url: "/links",
-              data: {
-                message: "hello",
-              },
-              withCredentials: true,
-            })
-              .then((res) => console.log(res))
-              .catch((error) => console.log(error));
-          },
+          onAction: () => onSave(),
           loading: false,
           disabled: false,
         }}
@@ -238,6 +267,7 @@ export default function LinkSetting({ productInfo, id, setPickerOpen, type }) {
                 value={link !== "" && link + outputParams}
                 multiline={true}
                 id="copy_link"
+                error={linkError}
               />
               <Button
                 disabled={link === ""}

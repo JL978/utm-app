@@ -8,6 +8,10 @@ import next from "next";
 import Router from "koa-router";
 import session from "koa-session";
 import * as handlers from "./handlers/index";
+import randId from "./utils/id";
+import Links from "../db/Models/Links";
+import db from "../db/config";
+
 const koaBody = require("koa-body");
 
 dotenv.config();
@@ -18,6 +22,11 @@ const app = next({
 });
 const handle = app.getRequestHandler();
 const { SHOPIFY_API_SECRET, SHOPIFY_API_KEY, SCOPES } = process.env;
+
+db.authenticate()
+  .then(() => console.log("connected to db"))
+  .catch((err) => console.log(err));
+
 app.prepare().then(() => {
   const server = new Koa();
   const router = new Router();
@@ -63,7 +72,21 @@ app.prepare().then(() => {
 
   router.post("/links", koaBody(), async (ctx) => {
     const body = ctx.request.body;
-    console.log(body);
+    const { resource_link, paramsArr, resource_type, store_id } = body;
+    const newID = randId(12);
+    let data = {
+      link_id: newID,
+      store_id,
+      resource_type,
+      resource_link,
+      discount_code: null,
+    };
+    paramsArr.map(({ param, input }) => {
+      data = { ...data, [param]: input };
+    });
+    console.log(data);
+    //Links.create(data)
+
     ctx.res.statusCode = 200;
   });
 
@@ -74,3 +97,14 @@ app.prepare().then(() => {
     console.log(`> Ready on http://localhost:${port}`);
   });
 });
+
+// link_id VARCHAR(16) PRIMARY KEY,
+// store_id VARCHAR(100),
+// resource_type VARCHAR(50),
+// resource_link VARCHAR(255),
+// utm_source VARCHAR(100),
+// utm_medium VARCHAR(100),
+// utm_campaign VARCHAR(100),
+// utm_content VARCHAR(100),
+// utm_term VARCHAR(100),
+// discount_code VARCHAR(50)

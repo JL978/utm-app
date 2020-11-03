@@ -8,6 +8,7 @@ import translations from "@shopify/polaris/locales/en.json";
 import Layout from "../components/Layout";
 import RoutePropagator from "../router";
 import { StaticRouter as Router } from "react-router-dom";
+import { OriginContext } from "../Context";
 
 const client = new ApolloClient({
   uri: "/graphql",
@@ -48,7 +49,9 @@ class MyApp extends App {
           >
             <ApolloProvider client={client}>
               <Layout>
-                <Component {...pageProps} />
+                <OriginContext.Provider value={shopOrigin}>
+                  <Component {...pageProps} />
+                </OriginContext.Provider>
                 <RoutePropagator />
               </Layout>
             </ApolloProvider>
