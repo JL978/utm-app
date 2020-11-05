@@ -12,7 +12,7 @@ CREATE TABLE users(
 
 CREATE TABLE links(
     link_id VARCHAR(16) PRIMARY KEY,
-    store_id VARCHAR(100),
+    store_id VARCHAR(255),
     resource_type VARCHAR(50),
     resource_link VARCHAR(255),
     utm_source VARCHAR(100),
@@ -20,5 +20,7 @@ CREATE TABLE links(
     utm_campaign VARCHAR(100),
     utm_content VARCHAR(100),
     utm_term VARCHAR(100),
-    discount_code VARCHAR(50)
+    discount_code VARCHAR(50),
+    "createdAt" DATE,
+    "updatedAt" DATE
 );

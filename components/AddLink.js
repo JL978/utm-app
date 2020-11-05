@@ -62,6 +62,8 @@ export default function AddLink() {
     if (data !== undefined && !error) {
       const url = data.product.onlineStorePreviewUrl;
       setLink(url);
+    } else {
+      console.log(error);
     }
   }, [data]);
 

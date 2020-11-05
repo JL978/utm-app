@@ -4,6 +4,10 @@ const db = require("../config");
 const Links = db.define("links", {
   link_id: {
     type: Sequelize.STRING,
+    primaryKey: true,
+  },
+  store_id: {
+    type: Sequelize.STRING,
   },
   resource_type: {
     type: Sequelize.STRING,
@@ -21,6 +25,9 @@ const Links = db.define("links", {
     type: Sequelize.STRING,
   },
   utm_content: {
+    type: Sequelize.STRING,
+  },
+  utm_term: {
     type: Sequelize.STRING,
   },
   discount_code: {

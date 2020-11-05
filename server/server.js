@@ -84,10 +84,18 @@ app.prepare().then(() => {
     paramsArr.map(({ param, input }) => {
       data = { ...data, [param]: input };
     });
+
     console.log(data);
-    //Links.create(data)
+
+    Links.create(data)
+      .then(() => console.log("success"))
+      .catch((error) => console.log(error));
 
     ctx.res.statusCode = 200;
+  });
+
+  router.get("/links/:id", async (ctx) => {
+    console.log(ctx.params);
   });
 
   server.use(router.allowedMethods());
