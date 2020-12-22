@@ -64,11 +64,12 @@ app.prepare().then(() => {
       version: ApiVersion.October19,
     })
   );
-  router.get("(.*)", verifyRequest(), async (ctx) => {
-    await handle(ctx.req, ctx.res);
-    ctx.respond = false;
-    ctx.res.statusCode = 200;
-  });
+  // router.get("(.*)", verifyRequest(), async (ctx, next) => {
+  //   await handle(ctx.req, ctx.res);
+  //   ctx.respond = false;
+  //   ctx.res.statusCode = 200;
+  //   next();
+  // });
 
   router.post("/links", koaBody(), async (ctx) => {
     const body = ctx.request.body;
@@ -94,8 +95,9 @@ app.prepare().then(() => {
     ctx.res.statusCode = 200;
   });
 
-  router.get("/links/:id", async (ctx) => {
-    console.log(ctx.params);
+  router.get("/stuff", async (ctx) => {
+    ctx.respond = false;
+    ctx.res.statusCode = 200;
   });
 
   server.use(router.allowedMethods());

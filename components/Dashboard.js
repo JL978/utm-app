@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Page, Card, Layout, DataTable, Heading } from "@shopify/polaris";
+import axios from "axios";
 
 export default function DashBoard() {
   const rows = [
@@ -13,6 +14,16 @@ export default function DashBoard() {
       "$14,240.00",
     ],
   ];
+
+  useEffect(() => {
+    axios({
+      method: "GET",
+      url: "/stuff",
+      withCredentials: true,
+    })
+      .then((res) => console.log(res))
+      .catch((error) => console.log(error));
+  }, []);
 
   return (
     <Page title="Dashboard">
